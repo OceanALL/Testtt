@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lá Thư Chúc Mừng Sinh Nhật</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Arial", sans-serif;
+        background-color: #f3f3f3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .letter {
+        width: 550px;
+        height: 850px;
+        position: relative;
+        perspective: 1000px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .letter-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 1s;
+      }
+
+      .letter-front,
+      .letter-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 10px;
+      }
+
+      .letter-front {
+        background-color: #ffebf0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #e91e63;
+        letter-spacing: 1px;
+        padding: 20px;
+      }
+
+      .letter-front span {
+        font-size: 16px;
+        color: #888;
+        font-weight: normal;
+        margin-top: 10px;
+      }
+
+      .letter-back {
+        transform: rotateY(180deg);
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .upper-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .upper-section img {
+        width: 80%;
+        max-width: 350px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+
+      .upper-section .message {
+        font-size: 18px;
+        color: #555;
+        white-space: pre-wrap;
+        text-align: center;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .lower-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      #christmasTree {
+        margin-top: 20px;
+        display: none;
+        width: 80%;
+        max-width: 350px;
+        border-radius: 5px;
+      }
+
+      .christmas-message {
+        font-size: 16px;
+        color: #333;
+        max-height: none;
+        overflow: visible;
+        padding-right: 10px;
+        margin-top: 10px;
+        white-space: pre-wrap;
+        text-align: center;
+      }
+
+      .flipped {
+        transform: rotateY(180deg);
+      }
+
+      .music-container {
+        width: 640px;
+        margin-top: 20px;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #e91e63;
+        color: white;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #d81b60;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="letter" onclick="flipLetter()">
+      <div class="letter-inner" id="letterInner">
+        <div class="letter-front">
+          <div>Chúc Mừng Sinh Nhật</div>
+          <span>Bấm vào lá thư để lật mặt sau</span>
+        </div>
+        <div class="letter-back">
+          <div class="upper-section">
+            <img
+              src="hinhanh/vuon-hoa-tulip.webp"
+              alt="Vườn hoa tulip màu hồng"
+            />
+            <div class="message" id="message"></div>
+          </div>
+          <div class="lower-section">
+            <div id="christmasTree">
+              <img src="hinhanh/cay-thong-noel.webp" alt="Cây thông Noel" />
+            </div>
+            <div id="christmasMessage" class="christmas-message"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thẻ audio để phát nhạc -->
+    <div class="music-container" id="musicContainer" style="display: none">
+      <audio id="audioPlayer" controls>
+        <source src="mat-ket-noi.mp3" type="audio/mp3" />
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <script>
+      const lines = [
+        "Chúc mừng sinh nhật Vũ Thị Hồng Hạnh",
+        "Chúc Hạnh ngày càng xinh đẹp, vui vẻ, ít mệt hơn",
+        "Mong Hạnh sẽ tìm được 1 người làm Hạnh hạnh phúc, không còn phải khóc đêm, bình yên hơn",
+        "Lun hiểu và biết rõ Hạnh hơn bản thân mình",
+        "Lun ủng hộ và cổ vũ và đồng hành cùng Hạnh làm mọi chuyện",
+        "Hoa hồng , Biển cả và tôi",
+      ];
+
+      const christmasLines = [
+        "Mùa đông sắp tới rồi nhớ mặc áo ấm nhiều vô.",
+        "Phải mang theo kẹo với khăn quàng trong túi đó.",
+        "Ít tắm đêm lại, nhớ ăn uống đầy đủ k lại bị đau dạ dày.",
+        "Tự lo cho bản thân nhé vì không còn ai nhắc từng chút một đâu.",
+      ];
+
+      // Thêm nhạc vào lúc lật mặt sau
+      function flipLetter() {
+        const letterInner = document.getElementById("letterInner");
+        letterInner.classList.toggle("flipped");
+
+        // Nếu lật mặt sau, sẽ phát nhạc
+        if (letterInner.classList.contains("flipped")) {
+          // Hiển thị audio và phát nhạc
+          const musicContainer = document.getElementById("musicContainer");
+          musicContainer.style.display = "block"; // Hiển thị audio
+
+          // Lấy thẻ audio và phát nhạc
+          const audioPlayer = document.getElementById("audioPlayer");
+          audioPlayer.play(); // Phát nhạc khi lật mặt sau
+
+          // Bắt đầu gõ văn bản
+          startTyping("message", lines, () => {
+            document.getElementById("christmasTree").style.display = "block";
+            startTyping("christmasMessage", christmasLines);
+          });
+        }
+      }
+
+      function startTyping(elementId, textLines, callback) {
+        const element = document.getElementById(elementId);
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeLine() {
+          if (lineIndex < textLines.length) {
+            if (charIndex < textLines[lineIndex].length) {
+              element.innerHTML += textLines[lineIndex][charIndex];
+              charIndex++;
+              setTimeout(typeLine, 83);
+            } else {
+              element.innerHTML += "<br>";
+              lineIndex++;
+              charIndex = 0;
+              setTimeout(typeLine, 83);
+            }
+          } else if (callback) {
+            callback();
+          }
+        }
+
+        element.innerHTML = "";
+        typeLine();
+      }
+
+      // Lắng nghe sự kiện click vào nút
+      document
+        .getElementById("playMusicButton")
+        .addEventListener("click", function () {
+          const musicContainer = document.getElementById("musicContainer");
+          musicContainer.style.display = "block"; // Hiển thị nhạc
+
+          // Bắt đầu phát nhạc khi nhấn nút
+          const audioPlayer = document.getElementById("audioPlayer");
+          audioPlayer.play(); // Phát nhạc khi nhấn nút
+        });
+    </script>
+  </body>
+</html>
